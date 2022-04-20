@@ -1,5 +1,5 @@
 {
-  "name": "@fusionworks/ra-data-nest-crud",
+  "name": "@fleye-me/ra-data-nest-crud",
   "version": "1.0.12",
   "description": "a data provider for react admin that handles request from nestjsx-crud server",
   "main": "dist/index.js",
