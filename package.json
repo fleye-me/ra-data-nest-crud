@@ -1,8 +1,9 @@
 {
   "name": "@fleye-me/ra-data-nest-crud",
   "version": "1.0.12",
-  "description": "a data provider for react admin that handles request from nestjsx-crud server",
+  "description": "A NestJS data provider for React Admin",
   "main": "dist/index.js",
+  "repository": "https://github.com/fleye-me/ra-data-nest-crud",
   "scripts": {
     "rollup": "rollup",
     "watch": "rollup -cw",
@@ -17,10 +18,6 @@
     "eslint": "eslint",
     "lint": "eslint src --ext .ts && tsc --noEmit"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FusionWorks/react-admin-nestjsx-crud-dataprovider.git"
-  },
   "keywords": [
     "ra",
     "react-admin",
@@ -28,8 +25,6 @@
     "data-provider",
     "nestjsx/crud"
   ],
-  "author": "nzuza",
-  "license": "ISC",
   "devDependencies": {
     "@babel/preset-env": "^7.5.5",
     "@babel/preset-typescript": "^7.3.3",
@@ -55,10 +50,6 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "typescript": "^3.5.3"
   },
-  "bugs": {
-    "url": "https://github.com/FusionWorks/react-admin-nestjsx-crud-dataprovider/issues"
-  },
-  "homepage": "https://github.com/FusionWorks/react-admin-nestjsx-crud-dataprovider#readme",
   "dependencies": {},
   "peerDependencies": {
     "ra-core": "^2.9.5",
