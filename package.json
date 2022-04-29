@@ -1,6 +1,6 @@
 {
   "name": "@fleye-me/ra-data-nest-crud",
-  "version": "1.0.12",
+  "version": "1.1.0",
   "description": "A NestJS data provider for React Admin",
   "main": "dist/index.js",
   "repository": "https://github.com/fleye-me/ra-data-nest-crud",
