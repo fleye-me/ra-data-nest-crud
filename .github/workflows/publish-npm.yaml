@@ -1,0 +1,32 @@
+name: Publish Package to npmjs
+
+on:
+  workflow_run:
+    workflows: ["Release Version"]
+    types: [completed]
+    branches:
+      - 'master'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout to master branch'
+        uses: actions/checkout@master
+        with:
+          ref: master
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+          scope: '@fleye-me'
+
+      - run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
