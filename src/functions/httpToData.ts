@@ -1,30 +1,18 @@
 import { ClientRequestType, ObjectLiteral } from "../interfaces";
-import { DELETE_MANY, GET_MANY_REFERENCE, GET_LIST } from "ra-core";
+import { POSSIBLE_SINGLE_ACTIONS } from "../constants";
 
 export function httpParse(
   rawResponse: ObjectLiteral,
-  request: ClientRequestType,
+  request: ClientRequestType
 ) {
-  let toReturn: { data: ObjectLiteral, total?: number } = {
-    data: Array.isArray(rawResponse)
-      ? rawResponse.map((raw: ObjectLiteral) => raw.json)
-      : rawResponse.json,
-  };
+  const { json } = rawResponse;
 
-  switch (request.type) {
-    case DELETE_MANY:
-      toReturn = {
-        data: request.params.ids,
-      };
-      break;
-
-    case GET_LIST:
-    case GET_MANY_REFERENCE:
-      toReturn = {
-        data: toReturn.data,
-        total: toReturn.total,
-      };
-  }
+  let toReturn: {
+    data: ObjectLiteral | ObjectLiteral[];
+    total?: number;
+    page?: number;
+    pageCount?: number;
+  } = POSSIBLE_SINGLE_ACTIONS.includes(request.type) ? { data: json } : json;
 
   return toReturn;
 }

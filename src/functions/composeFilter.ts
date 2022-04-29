@@ -1,17 +1,20 @@
-import { QueryFilter, ComparisonOperator, CondOperator } from "@nestjsx/crud-request";
+import { ComparisonOperator, CondOperator } from "@nestjsx/crud-request";
 import { fetchUtils } from "ra-core";
 import { ObjectLiteral } from "../interfaces";
 
-/**
- * Not sure whats happening here.
- * @param paramsFilter
- */
-export function composeFilter(paramsFilter: ObjectLiteral): QueryFilter[] {
+export function composeFilter(paramsFilter: ObjectLiteral) {
   const flatFilter = fetchUtils.flattenObject(paramsFilter);
 
-  return Object.keys(flatFilter).map((key) => {
+  if (paramsFilter["$search"]) {
+    return {
+      s: paramsFilter["$search"]
+    };
+  }
+
+  const filter = Object.keys(flatFilter).map(key => {
     const splitKey = key.split("||");
-    const operator = splitKey[1] as ComparisonOperator || CondOperator.CONTAINS;
+    const operator =
+      (splitKey[1] as ComparisonOperator) || CondOperator.CONTAINS;
     let field: string = splitKey[0];
 
     if (field.indexOf("_") === 0 && field.indexOf(".") !== -1) {
@@ -21,7 +24,9 @@ export function composeFilter(paramsFilter: ObjectLiteral): QueryFilter[] {
     return {
       field,
       operator,
-      value: flatFilter[key],
+      value: flatFilter[key]
     };
   });
+
+  return filter;
 }

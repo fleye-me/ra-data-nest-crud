@@ -11,8 +11,10 @@ export type POSSIBLE_ACTIONS =
   | "DELETE"
   | "DELETE_MANY";
 
-export type FetchJsonType = (url: any, options?: ObjectLiteral | undefined) => Promise<{ status: number; headers: Headers; body: string; json: any; }>;
-
+export type FetchJsonType = (
+  url: any,
+  options?: ObjectLiteral | undefined
+) => Promise<{ status: number; headers: Headers; body: string; json: any }>;
 
 export interface ConfigurationEntry {
   requestMutator?(request: ClientRequestType): ClientRequestType;

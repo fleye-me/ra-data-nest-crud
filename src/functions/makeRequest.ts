@@ -1,15 +1,11 @@
-import {
-  fetchUtils,
-  UPDATE_MANY,
-  DELETE_MANY
-} from "ra-core";
+import { fetchUtils, UPDATE_MANY, DELETE_MANY } from "ra-core";
 
 import {
   ClientRequestType,
   POSSIBLE_ACTIONS,
   ConfigurationEntry,
   ObjectLiteral,
-  FetchJsonType,
+  FetchJsonType
 } from "../interfaces";
 
 import { extractRealData } from "../functions/extractRealData";
@@ -26,7 +22,7 @@ export async function makeRequest(
   configuration: ConfigurationEntry,
   type: POSSIBLE_ACTIONS,
   resource: string,
-  params: ObjectLiteral,
+  params: ObjectLiteral
 ): Promise<{ data: ObjectLiteral }> {
   let rawResponse: ObjectLiteral;
 
@@ -36,7 +32,7 @@ export async function makeRequest(
     type,
     resource: parsedResource.realResource,
     params,
-    integratedParams: parsedResource.integratedParams,
+    integratedParams: parsedResource.integratedParams
   };
 
   if (configuration && configuration.requestMutator) {
@@ -83,13 +79,13 @@ export async function makeRequest(
   if (configuration && configuration.responseMutator) {
     responseIntermediate = configuration.responseMutator(
       responseIntermediate,
-      requestIntermediate,
+      requestIntermediate
     );
   }
 
-  const oneMoreIntermediateResponse = httpParse(
+  let oneMoreIntermediateResponse = httpParse(
     responseIntermediate.response,
-    requestIntermediate,
+    requestIntermediate
   );
 
   // in some conditions, we want to fetch fresh copy of the data from nest/crud.
@@ -102,24 +98,8 @@ export async function makeRequest(
         configuration,
         "GET_ONE",
         resource,
-        { id: oneMoreIntermediateResponse.data.id },
+        { id: responseIntermediate.response.json.id }
       );
-
-    case "UPDATE_MANY":
-      return Promise.all(
-        oneMoreIntermediateResponse.data.map(({ id }: { id: number | string }) =>
-          makeRequest(
-            apiUrl,
-            httpClient,
-            configuration,
-            "GET_ONE",
-            resource,
-            { id },
-          )
-        )
-      ).then((all: ObjectLiteral) => ({
-        data: all,
-      }));
 
     default:
       return oneMoreIntermediateResponse;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-object-literal-type-assertion */
 import {
   GET_LIST,
   GET_ONE,
@@ -5,13 +6,14 @@ import {
   GET_MANY_REFERENCE,
   CREATE,
   UPDATE,
-  DELETE,
+  DELETE
 } from "ra-core";
 
 import {
   RequestQueryBuilder,
   CondOperator,
   QueryJoin,
+  QueryFilter
 } from "@nestjsx/crud-request";
 
 import { extractRealData } from "./extractRealData";
@@ -22,22 +24,33 @@ export function dataRequestToHTTP(
   apiUrl: string,
   type: string,
   resource: string,
-  params: ObjectLiteral,
+  params: ObjectLiteral
 ) {
   let url = "";
   const options: ObjectLiteral = {};
   const parsedResource = extractRealData(resource);
   const { realResource } = parsedResource;
-  const integratedParams: string[] | QueryJoin | ObjectLiteral = parsedResource.integratedParams || {} as ObjectLiteral;
+  const integratedParams: string[] | QueryJoin | ObjectLiteral =
+    parsedResource.integratedParams || ({} as ObjectLiteral);
 
   switch (type) {
     case GET_LIST: {
       const { page, perPage } = params.pagination;
 
-      let query = RequestQueryBuilder
-        .create({
-          filter: composeFilter(params.filter),
-        })
+      const composedFilter = composeFilter(params.filter) as ObjectLiteral;
+
+      let filter = {};
+      if (composedFilter["s"]) {
+        filter = composedFilter["s"];
+      } else {
+        filter = {
+          filter: composedFilter
+        };
+      }
+
+      let query = RequestQueryBuilder.create({
+        ...filter
+      })
         .setLimit(perPage)
         .setPage(page)
         .sortBy(params.sort)
@@ -77,13 +90,11 @@ export function dataRequestToHTTP(
     }
 
     case GET_MANY: {
-      let query = RequestQueryBuilder
-        .create()
-        .setFilter({
-          field: "id",
-          operator: CondOperator.IN,
-          value: `${params.ids}`,
-        });
+      let query = RequestQueryBuilder.create().setFilter({
+        field: "id",
+        operator: CondOperator.IN,
+        value: `${params.ids}`
+      });
 
       if (integratedParams.join) {
         integratedParams.join.forEach((join: QueryJoin) => {
@@ -102,16 +113,15 @@ export function dataRequestToHTTP(
 
     case GET_MANY_REFERENCE: {
       const { page, perPage } = params.pagination;
-      const filter = composeFilter(params.filter);
+      const filter = composeFilter(params.filter) as QueryFilter[];
 
       filter.push({
         field: params.target,
         operator: CondOperator.EQUALS,
-        value: params.id,
+        value: params.id
       });
 
-      let query = RequestQueryBuilder
-        .create({ filter })
+      let query = RequestQueryBuilder.create({ filter })
         .sortBy(params.sort)
         .setLimit(perPage)
         .setOffset((page - 1) * perPage);

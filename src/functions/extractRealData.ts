@@ -5,7 +5,7 @@ export function extractRealData(resource: string) {
   // Not encoded, return it
   if (resource.indexOf(MAGIC_SEPARATOR) === -1) {
     return {
-      realResource: resource,
+      realResource: resource
     };
   }
 
@@ -16,13 +16,13 @@ export function extractRealData(resource: string) {
 
     return {
       realResource,
-      integratedParams,
+      integratedParams
     };
   } catch (error) {
     console.warn("failed to parse params", { realResource, paramsStr, error });
 
     return {
-      realResource,
+      realResource
     };
   }
 }
